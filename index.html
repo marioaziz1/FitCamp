@@ -892,9 +892,103 @@ footer {
 #bottomNav    { display: none; }
 #adminFab     { display: none; }
 
-/* Safe area support */
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  #bottomNav { padding-bottom: env(safe-area-inset-bottom); }
+/* ===== SECURITY MODALS ===== */
+#secModal, #contentModal {
+  position: fixed; inset: 0; z-index: 9998;
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+  display: none; align-items: center; justify-content: center;
+  padding: 20px;
+}
+#secModal.open, #contentModal.open { display: flex; }
+.sec-box {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 24px; width: 100%; max-width: 420px;
+  padding: 40px 36px; text-align: center;
+  animation: secSlideIn 0.35s cubic-bezier(0.32,0.72,0,1);
+  position: relative;
+}
+@keyframes secSlideIn {
+  from { opacity:0; transform:translateY(24px) scale(0.97); }
+  to   { opacity:1; transform:translateY(0)   scale(1);    }
+}
+.sec-box.shake {
+  animation: secShake 0.4s ease;
+}
+@keyframes secShake {
+  0%,100%{ transform:translateX(0); }
+  20%    { transform:translateX(-8px); }
+  40%    { transform:translateX(8px); }
+  60%    { transform:translateX(-6px); }
+  80%    { transform:translateX(6px); }
+}
+.sec-icon {
+  width: 64px; height: 64px; border-radius: 18px;
+  background: rgba(0,229,160,0.12); border: 1px solid rgba(0,229,160,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; margin: 0 auto 20px;
+}
+.sec-icon.danger { background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.25); }
+.sec-title { font-size: 20px; font-weight: 900; margin-bottom: 6px; }
+.sec-sub   { font-size: 13px; color: var(--text2); margin-bottom: 28px; line-height: 1.6; }
+.sec-input-wrap {
+  position: relative; margin-bottom: 12px;
+}
+.sec-input {
+  width: 100%; background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 13px 44px 13px 16px;
+  color: var(--text); font-family: 'Cairo', sans-serif;
+  font-size: 16px; letter-spacing: 3px; text-align: center;
+  outline: none; transition: border-color 0.2s;
+}
+.sec-input:focus { border-color: var(--accent); }
+.sec-input.error { border-color: #ef4444; }
+.sec-eye {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--text3); cursor: pointer;
+  font-size: 16px; padding: 4px;
+}
+.sec-error {
+  font-size: 12px; color: #ef4444; font-weight: 700;
+  min-height: 18px; margin-bottom: 16px; display: block;
+}
+.sec-btn {
+  width: 100%; padding: 14px; border-radius: 12px; border: none;
+  font-family: 'Cairo', sans-serif; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: all 0.2s; margin-bottom: 10px;
+}
+.sec-btn-primary { background: var(--accent); color: #000; }
+.sec-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,229,160,0.35); }
+.sec-btn-primary:active { transform: scale(0.97); }
+.sec-btn-ghost {
+  background: transparent; color: var(--text2);
+  border: 1px solid var(--border);
+}
+.sec-btn-ghost:hover { border-color: var(--text2); color: var(--text); }
+.sec-attempts { font-size: 11px; color: var(--text3); margin-top: 8px; }
+/* Locked state */
+.sec-locked { color: #ef4444 !important; }
+
+/* Security tab inputs */
+.sec-setting-row {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px; margin-bottom: 12px;
+}
+.sec-setting-label {
+  font-size: 12px; font-weight: 800; color: var(--text3);
+  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.sec-setting-input {
+  width: 100%; background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 8px; padding: 9px 14px; color: var(--text);
+  font-family: 'Cairo', sans-serif; font-size: 14px; outline: none;
+  transition: border-color 0.2s;
+}
+.sec-setting-input:focus { border-color: var(--accent); }
+
+@media (max-width: 768px) {
+  .sec-box { padding: 32px 24px; border-radius: 20px; }
+  .sec-title { font-size: 18px; }
 }
 </style>
 </head>
@@ -1563,14 +1657,14 @@ footer {
   <h2 class="section-title reveal">روابط <span class="gradient-text">المشروع</span></h2>
   <p class="section-sub reveal">جميع الموارد والمواد الإضافية للمشروع</p>
   <div class="refs-grid reveal">
-    <a href="https://drive.google.com/drive/folders/1vBfucBSAJwmbtEGeWCjOZANTkzUE8Nbe?usp=drive_link" target="_blank" class="ref-card">
+    <div class="ref-card" onclick="openProtectedContent()" style="cursor:pointer">
       <div class="ref-icon"><i class="fab fa-google-drive"></i></div>
       <div style="flex:1">
         <div class="ref-title">مواد FitCamp الكاملة</div>
-        <div class="ref-url">drive.google.com/drive/folders/1vBfuc...</div>
+        <div class="ref-url">🔒 محمي بكلمة مرور — اضغط للوصول</div>
       </div>
-      <div class="ref-arrow"><i class="fas fa-external-link-alt"></i></div>
-    </a>
+      <div class="ref-arrow"><i class="fas fa-lock"></i></div>
+    </div>
     <div class="ref-card" style="cursor:default">
       <div class="ref-icon"><i class="fas fa-file-pdf"></i></div>
       <div>
@@ -1597,7 +1691,7 @@ footer {
     <p class="cta-sub" data-fc-key="cta.desc">FitCamp ليس مجرد تمرين — هو تجربة إنسانية كاملة تحوّل الأفراد وتبني مجتمعات أقوى وأصح</p>
     <div class="cta-btns">
       <button class="btn-hero btn-hero-primary" onclick="document.getElementById('models').scrollIntoView({behavior:'smooth'})">ابدأ بتطبيق النموذج</button>
-      <a href="https://drive.google.com/drive/folders/1vBfucBSAJwmbtEGeWCjOZANTkzUE8Nbe?usp=drive_link" target="_blank" class="btn-hero btn-hero-secondary" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px"><i class="fab fa-google-drive"></i> تحميل المواد الكاملة</a>
+      <button class="btn-hero btn-hero-secondary" onclick="openProtectedContent()" style="display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer"><i class="fab fa-google-drive"></i> تحميل المواد الكاملة <i class="fas fa-lock" style="font-size:12px;opacity:0.7"></i></button>
     </div>
   </div>
 </section>
@@ -1656,6 +1750,7 @@ footer {
       <button class="admin-tab-btn" onclick="switchAdminTab(this,'atab-stats')" style="padding:12px 20px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:-1px">الإحصائيات</button>
       <button class="admin-tab-btn" onclick="switchAdminTab(this,'atab-text')" style="padding:12px 20px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:-1px">تعديل النصوص</button>
       <button class="admin-tab-btn" onclick="switchAdminTab(this,'atab-data')" style="padding:12px 20px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:-1px">التخزين</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab(this,'atab-security')" style="padding:12px 20px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:-1px">🔐 الأمان</button>
     </div>
 
     <div class="admin-body">
@@ -1737,12 +1832,82 @@ footer {
         </div>
       </div>
 
+      <!-- TAB: Security -->
+      <div id="atab-security" class="admin-tab-panel" style="display:none">
+        <div class="admin-section-title">إعدادات الأمان</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6">تغيير كلمات المرور — تُحفظ تلقائياً وتصبح سارية فوراً.</p>
+
+        <div class="sec-setting-row">
+          <div class="sec-setting-label"><i class="fas fa-user-shield" style="color:var(--accent)"></i> كلمة مرور لوحة الإدارة</div>
+          <div style="position:relative;margin-bottom:8px">
+            <input class="sec-setting-input" type="password" id="newAdminPw" placeholder="أدخل كلمة المرور الجديدة" autocomplete="new-password">
+            <button class="sec-eye" style="position:absolute;left:10px;top:50%;transform:translateY(-50%)" onclick="toggleSecEye('newAdminPw','eyeAdmin')"><i id="eyeAdmin" class="fas fa-eye-slash"></i></button>
+          </div>
+          <div style="position:relative">
+            <input class="sec-setting-input" type="password" id="newAdminPwConfirm" placeholder="تأكيد كلمة المرور" autocomplete="new-password">
+            <button class="sec-eye" style="position:absolute;left:10px;top:50%;transform:translateY(-50%)" onclick="toggleSecEye('newAdminPwConfirm','eyeAdminC')"><i id="eyeAdminC" class="fas fa-eye-slash"></i></button>
+          </div>
+          <span class="sec-error" id="adminPwChangeError" style="display:block;margin-top:6px;text-align:right"></span>
+          <button class="admin-save-btn" style="margin-top:10px" onclick="updateAdminPassword()"><i class="fas fa-key"></i> تحديث كلمة مرور الإدارة</button>
+        </div>
+
+        <div class="sec-setting-row">
+          <div class="sec-setting-label"><i class="fas fa-folder-lock" style="color:#ef4444"></i> كلمة مرور الوصول للمحتوى</div>
+          <div style="position:relative;margin-bottom:8px">
+            <input class="sec-setting-input" type="password" id="newContentPw" placeholder="أدخل كلمة المرور الجديدة" autocomplete="new-password">
+            <button class="sec-eye" style="position:absolute;left:10px;top:50%;transform:translateY(-50%)" onclick="toggleSecEye('newContentPw','eyeContent')"><i id="eyeContent" class="fas fa-eye-slash"></i></button>
+          </div>
+          <span class="sec-error" id="contentPwChangeError" style="display:block;margin-top:6px;text-align:right"></span>
+          <button class="admin-save-btn" style="margin-top:10px;background:linear-gradient(135deg,#ef4444,#dc2626)" onclick="updateContentPassword()"><i class="fas fa-lock"></i> تحديث كلمة مرور المحتوى</button>
+        </div>
+
+        <div style="margin-top:16px;padding:16px;background:rgba(0,229,160,0.05);border:1px solid rgba(0,229,160,0.15);border-radius:12px">
+          <div style="font-size:12px;color:var(--text3);line-height:1.8">
+            <i class="fas fa-info-circle" style="color:var(--accent);margin-left:6px"></i>
+            كلمات المرور محفوظة محلياً — لا يتم إرسالها لأي خادم. في حال نسيان كلمة مرور الإدارة يمكن استعادتها عبر مسح بيانات المتصفح.
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
 <!-- HIDDEN FILE INPUT -->
 <input type="file" id="importInput" accept=".json" style="display:none" onchange="handleImport(event)">
+
+<!-- ADMIN PASSWORD MODAL -->
+<div id="secModal">
+  <div class="sec-box" id="secBox">
+    <div class="sec-icon"><i class="fas fa-shield-alt" style="color:var(--accent)"></i></div>
+    <div class="sec-title">لوحة الإدارة</div>
+    <div class="sec-sub">هذه المنطقة محمية — أدخل كلمة المرور للمتابعة</div>
+    <div class="sec-input-wrap">
+      <input class="sec-input" type="password" id="adminPwInput" placeholder="••••••••••" autocomplete="off" onkeydown="if(event.key==='Enter')checkAdminPassword()">
+      <button class="sec-eye" onclick="toggleSecEye('adminPwInput','adminEyeIcon')" tabindex="-1"><i id="adminEyeIcon" class="fas fa-eye-slash"></i></button>
+    </div>
+    <span class="sec-error" id="adminPwError"></span>
+    <button class="sec-btn sec-btn-primary" onclick="checkAdminPassword()"><i class="fas fa-unlock" style="margin-left:8px"></i>دخول</button>
+    <button class="sec-btn sec-btn-ghost" onclick="closeSecModal()">إلغاء</button>
+    <div class="sec-attempts" id="adminAttemptsMsg"></div>
+  </div>
+</div>
+
+<!-- CONTENT PASSWORD MODAL -->
+<div id="contentModal">
+  <div class="sec-box" id="contentBox">
+    <div class="sec-icon danger"><i class="fas fa-folder-lock" style="color:#ef4444"></i></div>
+    <div class="sec-title">محتوى محمي</div>
+    <div class="sec-sub">أدخل كلمة مرور الوصول لعرض المحتوى</div>
+    <div class="sec-input-wrap">
+      <input class="sec-input" type="password" id="contentPwInput" placeholder="••••" autocomplete="off" onkeydown="if(event.key==='Enter')checkContentPassword()">
+      <button class="sec-eye" onclick="toggleSecEye('contentPwInput','contentEyeIcon')" tabindex="-1"><i id="contentEyeIcon" class="fas fa-eye-slash"></i></button>
+    </div>
+    <span class="sec-error" id="contentPwError"></span>
+    <button class="sec-btn sec-btn-primary" onclick="checkContentPassword()"><i class="fas fa-external-link-alt" style="margin-left:8px"></i>فتح المحتوى</button>
+    <button class="sec-btn sec-btn-ghost" onclick="closeContentModal()">إلغاء</button>
+  </div>
+</div>
 
 <script>
 // ===== STORAGE SYSTEM =====
@@ -1789,6 +1954,200 @@ function saveStorage(data) {
 }
 
 let appState = loadStorage();
+
+// ===== SECURITY SYSTEM =====
+// Passwords stored as simple hashes — never in plain text in global scope
+const _fc = (() => {
+  const SEC_KEY = 'fitcamp_sec_v1';
+  // Default hashes: admin = FitC@mp0000 | content = 0020
+  const D_ADMIN   = btoa('FitC@mp0000');
+  const D_CONTENT = btoa('0020');
+
+  function loadSec() {
+    try {
+      const raw = localStorage.getItem(SEC_KEY);
+      return raw ? JSON.parse(raw) : { a: D_ADMIN, c: D_CONTENT };
+    } catch(e) { return { a: D_ADMIN, c: D_CONTENT }; }
+  }
+  function saveSec(obj) {
+    try { localStorage.setItem(SEC_KEY, JSON.stringify(obj)); } catch(e) {}
+  }
+  function checkA(pw) { return btoa(pw) === loadSec().a; }
+  function checkC(pw) { return btoa(pw) === loadSec().c; }
+  function setA(pw)   { const s = loadSec(); s.a = btoa(pw); saveSec(s); }
+  function setC(pw)   { const s = loadSec(); s.c = btoa(pw); saveSec(s); }
+  return { checkA, checkC, setA, setC };
+})();
+
+let _adminAttempts = 0;
+const MAX_ATTEMPTS = 5;
+let _adminLocked = false;
+let _lockTimer = null;
+// Pending target after successful admin auth
+let _adminPendingAction = null;
+
+// ---- Admin password modal ----
+function openAdmin() {
+  // Show password modal first — openAdmin is the trigger
+  _adminPendingAction = 'openPanel';
+  document.getElementById('secModal').classList.add('open');
+  document.getElementById('adminPwInput').value = '';
+  document.getElementById('adminPwError').textContent = '';
+  document.getElementById('adminAttemptsMsg').textContent = '';
+  document.getElementById('adminPwInput').classList.remove('error');
+  setTimeout(() => document.getElementById('adminPwInput').focus(), 100);
+}
+
+function closeSecModal() {
+  document.getElementById('secModal').classList.remove('open');
+  _adminPendingAction = null;
+}
+
+function checkAdminPassword() {
+  if (_adminLocked) return;
+  const pw = document.getElementById('adminPwInput').value;
+  const errorEl = document.getElementById('adminPwError');
+  const input   = document.getElementById('adminPwInput');
+
+  if (!pw) {
+    errorEl.textContent = 'الرجاء إدخال كلمة المرور';
+    shakeBox('secBox'); return;
+  }
+
+  if (_fc.checkA(pw)) {
+    // Correct — clear state and proceed
+    _adminAttempts = 0;
+    errorEl.textContent = '';
+    input.classList.remove('error');
+    document.getElementById('secModal').classList.remove('open');
+    _reallyOpenAdmin();
+  } else {
+    _adminAttempts++;
+    input.value = '';
+    input.classList.add('error');
+    shakeBox('secBox');
+    const remaining = MAX_ATTEMPTS - _adminAttempts;
+    if (remaining <= 0) {
+      _adminLocked = true;
+      errorEl.textContent = '';
+      document.getElementById('adminAttemptsMsg').innerHTML =
+        '<span class="sec-locked">⛔ تم قفل الوصول لمدة 60 ثانية</span>';
+      input.disabled = true;
+      _lockTimer = setTimeout(() => {
+        _adminLocked = false; _adminAttempts = 0;
+        input.disabled = false;
+        document.getElementById('adminAttemptsMsg').textContent = '';
+        errorEl.textContent = '';
+      }, 60000);
+    } else {
+      errorEl.textContent = `كلمة مرور خاطئة — ${remaining} محاولة متبقية`;
+      document.getElementById('adminAttemptsMsg').textContent = '';
+    }
+  }
+}
+
+function _reallyOpenAdmin() {
+  document.getElementById('adminOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  loadAdminStats();
+  updateStorageStatus();
+}
+
+// ---- Content password modal ----
+const CONTENT_URL = 'https://drive.google.com/drive/folders/1vBfucBSAJwmbtEGeWCjOZANTkzUE8Nbe?usp=drive_link';
+
+function openProtectedContent() {
+  document.getElementById('contentModal').classList.add('open');
+  document.getElementById('contentPwInput').value = '';
+  document.getElementById('contentPwError').textContent = '';
+  document.getElementById('contentPwInput').classList.remove('error');
+  setTimeout(() => document.getElementById('contentPwInput').focus(), 100);
+}
+
+function closeContentModal() {
+  document.getElementById('contentModal').classList.remove('open');
+}
+
+function checkContentPassword() {
+  const pw      = document.getElementById('contentPwInput').value;
+  const errorEl = document.getElementById('contentPwError');
+  const input   = document.getElementById('contentPwInput');
+
+  if (!pw) { errorEl.textContent = 'الرجاء إدخال كلمة المرور'; shakeBox('contentBox'); return; }
+
+  if (_fc.checkC(pw)) {
+    errorEl.textContent = '';
+    input.classList.remove('error');
+    document.getElementById('contentModal').classList.remove('open');
+    window.open(CONTENT_URL, '_blank');
+  } else {
+    input.value = '';
+    input.classList.add('error');
+    errorEl.textContent = 'كلمة المرور غير صحيحة';
+    shakeBox('contentBox');
+  }
+}
+
+// ---- Security settings (inside admin panel) ----
+function updateAdminPassword() {
+  const pw1 = document.getElementById('newAdminPw').value.trim();
+  const pw2 = document.getElementById('newAdminPwConfirm').value.trim();
+  const err = document.getElementById('adminPwChangeError');
+
+  if (!pw1)           { err.textContent = 'الرجاء إدخال كلمة المرور الجديدة'; return; }
+  if (pw1.length < 6) { err.textContent = 'يجب أن تكون 6 أحرف على الأقل'; return; }
+  if (pw1 !== pw2)    { err.textContent = 'كلمتا المرور غير متطابقتين'; return; }
+
+  _fc.setA(pw1);
+  err.textContent = '';
+  document.getElementById('newAdminPw').value = '';
+  document.getElementById('newAdminPwConfirm').value = '';
+  showToast('✓ تم تحديث كلمة مرور الإدارة');
+}
+
+function updateContentPassword() {
+  const pw  = document.getElementById('newContentPw').value.trim();
+  const err = document.getElementById('contentPwChangeError');
+
+  if (!pw)           { err.textContent = 'الرجاء إدخال كلمة المرور الجديدة'; return; }
+  if (pw.length < 2) { err.textContent = 'يجب أن تكون حرفين على الأقل'; return; }
+
+  _fc.setC(pw);
+  err.textContent = '';
+  document.getElementById('newContentPw').value = '';
+  showToast('✓ تم تحديث كلمة مرور المحتوى');
+}
+
+// ---- Helpers ----
+function shakeBox(id) {
+  const box = document.getElementById(id);
+  box.classList.remove('shake');
+  void box.offsetWidth; // reflow to restart animation
+  box.classList.add('shake');
+  setTimeout(() => box.classList.remove('shake'), 450);
+}
+
+function toggleSecEye(inputId, iconId) {
+  const input = document.getElementById(inputId);
+  const icon  = document.getElementById(iconId);
+  if (!input || !icon) return;
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'fas fa-eye';
+  } else {
+    input.type = 'password';
+    icon.className = 'fas fa-eye-slash';
+  }
+}
+
+// Close modals on overlay click
+document.getElementById('secModal').addEventListener('click', function(e) {
+  if (e.target === this) closeSecModal();
+});
+document.getElementById('contentModal').addEventListener('click', function(e) {
+  if (e.target === this) closeContentModal();
+});
+// Close modals on Escape (handled in keydown listener below)
 
 // ===== THEME =====
 function applyTheme(theme) {
@@ -2241,13 +2600,6 @@ function switchAdminTab(btn, tabId) {
   if (tabId === 'atab-data') updateStorageStatus();
 }
 
-// ===== ADMIN OPEN/CLOSE =====
-function openAdmin() {
-  document.getElementById('adminOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  loadAdminStats();
-  updateStorageStatus();
-}
 function closeAdmin() {
   document.getElementById('adminOverlay').classList.remove('open');
   document.body.style.overflow = '';
@@ -2582,8 +2934,14 @@ window.addEventListener('load', () => {
   }, 1700);
 });
 
-// Keyboard close admin
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAdmin(); });
+// Keyboard close all modals
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeAdmin();
+    closeSecModal();
+    closeContentModal();
+  }
+});
 </script>
 </body>
 </html>
